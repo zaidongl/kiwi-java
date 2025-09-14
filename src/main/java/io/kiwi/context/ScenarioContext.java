@@ -28,6 +28,10 @@ public class ScenarioContext {
         return scenarioVariables.get(key);
     }
 
+    public boolean hasVariable(String key) {
+        return scenarioVariables.containsKey(key);
+    }
+
     public StepResult getLastStepResult() {
         return lastStepResult;
     }

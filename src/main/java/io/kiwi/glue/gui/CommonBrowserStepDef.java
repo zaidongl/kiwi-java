@@ -10,6 +10,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.kiwi.context.VariableEvaluator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,12 +51,10 @@ public class CommonBrowserStepDef {
 
     @When("{string} input {string} into UI element {string}")
     public void inputIntoElement(String agentName, String text, String elementName) {
-        if(scenarioContext.getVariable(text) != null){
-            // text is a variable name
-            text = scenarioContext.getVariable(text).getData().toString();
-        }
+        String processedText = VariableEvaluator.evaluate(text, scenarioContext);
+         logger.info("Processed text after variable replacement: {}", processedText);
         WebBrowserAgent agent = (WebBrowserAgent) AgentsManager.getInstance().getAgent(agentName);
-        agent.type(elementName, text);
+        agent.type(elementName, processedText);
     }
 
     @When("{string} press {string} key on UI element {string}")
