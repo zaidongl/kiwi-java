@@ -1,6 +1,7 @@
 package io.kiwi.context;
 
 import io.cucumber.java.Scenario;
+import io.kiwi.security.crypto.AESCipher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,5 +43,18 @@ public class ScenarioContext {
 
     public Scenario getScenario(){
         return this.scenario;
+    }
+
+    /**
+     * Evaluate variables in the input string and replace them with their corresponding values from scenarioVariables.
+     * @param input the input string possibly containing variables in the format @variableName
+     * @return the input string with variables replaced by their values
+     */
+    public String evaluateVariable(String input) {
+        return VariableEvaluator.evaluate(input, this);
+    }
+
+    public String processCiphertext(String ciphertext) throws Exception {
+        return AESCipher.getInstance().decrypt(ciphertext);
     }
 }
