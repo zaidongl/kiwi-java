@@ -1,7 +1,8 @@
 package io.kiwi.glue.gui;
 
+import io.cucumber.java.AfterStep;
 import io.cucumber.java.en.When;
-import io.kiwi.agents.common.AgentsManager;
+import io.kiwi.agents.common.Agent;
 import io.kiwi.agents.gui.WebBrowserAgent;
 import io.kiwi.context.ScenarioContext;
 
@@ -29,38 +30,65 @@ public class CommonBrowserStepDef {
         this.scenarioContext = null;
     }
 
+    @AfterStep
+    public void captureScreenshotForFailedStep(Scenario scenario) {
+        if (scenario.isFailed() && this.scenarioContext != null) {
+            Agent agent = this.scenarioContext.getCurrentAgent();
+            if (agent instanceof WebBrowserAgent webAgent) {
+                logger.info("Scenario failed, capturing screenshot...");
+                byte[] screenshot = webAgent.captureScreenshot();
+                if (screenshot != null) {
+                    scenario.attach(screenshot, "image/png", "screenshot");
+                }
+            }
+        }
+    }
+
     @Given("{string} open page {string}")
     public void iOpenBrowserWithUrl(String agentName, String url) {
-        WebBrowserAgent agent = (WebBrowserAgent) AgentsManager.getInstance().getAgent(agentName);
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.navigateTo(url);
     }
 
 
     @Then("{string} should see UI element {string}")
     public void shouldSeeButton(String agentName, String elementName) {
-        WebBrowserAgent agent = (WebBrowserAgent) AgentsManager.getInstance().getAgent(agentName);
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.waitForSelector(elementName);
     }
 
     @When("{string} click UI element {string}")
     public void clickElement(String agentName, String elementName) {
-        WebBrowserAgent agent = (WebBrowserAgent) AgentsManager.getInstance().getAgent(agentName);
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.click(elementName);
     }
 
     @When("{string} input {string} into UI element {string}")
     public void inputIntoElement(String agentName, String text, String elementName) {
-        if(scenarioContext.getVariable(text) != null){
-            // text is a variable name
-            text = scenarioContext.getVariable(text).getData().toString();
-        }
-        WebBrowserAgent agent = (WebBrowserAgent) AgentsManager.getInstance().getAgent(agentName);
-        agent.type(elementName, text);
+        String processedText = scenarioContext.evaluateVariable(text);
+         logger.info("Processed text after variable replacement: {}", processedText);
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
+        agent.type(elementName, processedText);
+    }
+
+    @When("{string} input ciphertext {string} into text box {string}")
+    public void inputIntoPasswordTextbox(String agentName, String ciphertext, String elementName) throws Exception {
+        //ciphertext could be passed from variable, need to evaluate first
+        String processedCiphertext = scenarioContext.evaluateVariable(ciphertext);
+        String plainText = scenarioContext.processCiphertext(processedCiphertext);
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
+        agent.type(elementName, plainText);
     }
 
     @When("{string} press {string} key on UI element {string}")
     public void pressKey(String agentName, String key, String elementName) {
-        WebBrowserAgent agent = (WebBrowserAgent) AgentsManager.getInstance().getAgent(agentName);
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.press(elementName, key);
+    }
+
+    @Then("{string} should be on page {string}")
+    public void shouldBeOnPage(String agentName, String pageName) {
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
+        agent.isOnPage(pageName);
     }
 }
