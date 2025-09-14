@@ -1,6 +1,8 @@
 package io.kiwi.context;
 
 import io.cucumber.java.Scenario;
+import io.kiwi.agents.common.Agent;
+import io.kiwi.agents.common.AgentsManager;
 import io.kiwi.security.crypto.AESCipher;
 
 import java.util.HashMap;
@@ -10,6 +12,7 @@ public class ScenarioContext {
     private final Scenario scenario;
     private final Map<String, StepResult> scenarioVariables;
     private StepResult lastStepResult;
+    private Agent currentAgent;
 
     public ScenarioContext(Scenario scenario) {
         this.scenario = scenario;
@@ -56,5 +59,19 @@ public class ScenarioContext {
 
     public String processCiphertext(String ciphertext) throws Exception {
         return AESCipher.getInstance().decrypt(ciphertext);
+    }
+
+    public Agent getAgent(String agentName) {
+        Agent agent = AgentsManager.getInstance().getAgent(agentName);
+        if (agent == null) {
+            throw new RuntimeException("Agent " + agentName + " not found.");
+        }
+        currentAgent = agent;
+
+        return agent;
+    }
+
+    public Agent getCurrentAgent() {
+        return currentAgent;
     }
 }

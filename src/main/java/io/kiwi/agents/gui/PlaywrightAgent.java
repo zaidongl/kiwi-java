@@ -144,4 +144,13 @@ public class PlaywrightAgent extends Agent implements WebBrowserAgent{
         String selector = getElementLocator(elementName);
         page.waitForSelector(selector, new Page.WaitForSelectorOptions().setState(state));
     }
+
+    public void isOnPage(String pageName){
+        String pageRootLocator = getElementLocator(pageName + ".root");
+        page.waitForSelector(pageRootLocator, new Page.WaitForSelectorOptions().setState(WaitForSelectorState.VISIBLE));
+    }
+
+    public byte[] captureScreenshot() {
+        return page.screenshot();
+    }
 }

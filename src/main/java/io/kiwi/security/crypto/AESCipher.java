@@ -77,7 +77,7 @@ public class AESCipher {
             return new String(original, CHARSET);
         } catch (Exception ex) {
             logger.error("Error while decrypting {}, {}", ciphertext, ex.getMessage());
-            return null;
+            throw new IllegalArgumentException("Error while decrypting ciphertext " + ciphertext);
         }
     }
 }

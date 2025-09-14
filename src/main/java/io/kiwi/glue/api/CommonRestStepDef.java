@@ -1,6 +1,5 @@
 package io.kiwi.glue.api;
 
-import io.kiwi.agents.common.AgentsManager;
 import io.kiwi.agents.api.RestAgent;
 import io.kiwi.context.ScenarioContext;
 import io.kiwi.context.StepResult;
@@ -62,7 +61,7 @@ public class CommonRestStepDef {
     @When("{string} send a {string} request to endpoint {string} with {string}, {string} and {string}")
     public void iSendAPOSTRequestToEndpoint(String agentName, String method, String url, String headersVar,
                                             String paramsVar, String payloadVar){
-        RestAgent restAgent = (RestAgent) AgentsManager.getInstance().getAgent(agentName);
+        RestAgent restAgent = (RestAgent) this.scenarioContext.getAgent(agentName);
         Map<String, String> headers = null;
         if(headersVar != null && !headersVar.isEmpty()){
             StepResult headersStepResult = scenarioContext.getVariable(headersVar);
@@ -90,7 +89,6 @@ public class CommonRestStepDef {
     public void theStatusCodeShouldBe(String responseVarName, int expectedStatusCode) {
         Response response = (Response) scenarioContext.getVariable(responseVarName).getData();
         int actualStatusCode = response.getStatusCode();
-//        scenarioContext.write("Expected status code: " + expectedStatusCode + ", Actual status code: " + actualStatusCode);
         if(actualStatusCode != expectedStatusCode){
             throw new AssertionError("Expected status code: " + expectedStatusCode + ", but got: " + actualStatusCode);
         }

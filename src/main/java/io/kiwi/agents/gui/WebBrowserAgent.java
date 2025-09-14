@@ -24,4 +24,7 @@ public interface WebBrowserAgent {
 
     void waitForSelector(String elementName);
 
+    void isOnPage(String pageName);
+
+    byte[] captureScreenshot();
 }
