@@ -1,0 +1,6 @@
+# Root configuration file including project level settings
+test-project-name: kiwi-java-examples
+environment: dev
+
+
+

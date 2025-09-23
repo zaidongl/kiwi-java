@@ -3,18 +3,11 @@ package io.kiwi.agents.gui;
 import io.kiwi.config.gui.PlaywrightAgentConfig;
 import io.kiwi.agents.common.Agent;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 public class PlaywrightAgent extends Agent implements WebBrowserAgent{
@@ -24,50 +17,13 @@ public class PlaywrightAgent extends Agent implements WebBrowserAgent{
     private Browser browser;
     private BrowserContext context;
     private Page page;
-    private Map<String, String> elementRepo;
+    private final Map<String, String> elementRepo;
 
     public PlaywrightAgent(PlaywrightAgentConfig config) {
         this.config = config;
         this.name = config.getName();
-        loadElementRepo(config.getElementRepo());
+        elementRepo = WebBrowserAgent.loadElementRepo(config.getElementRepo());
         startBrowser();
-    }
-
-    private void loadElements(String elementsYamlPath) {
-        // Load elements from YAML file
-        elementRepo = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        try{
-            Map pageToElementMap = mapper.readValue(new File(elementsYamlPath), Map.class);
-            for(Object pageName : pageToElementMap.keySet()){
-                Map<String, String> elementMap = (Map<String, String>) pageToElementMap.get(pageName);
-                for(String elementName : elementMap.keySet()){
-                    String locator = elementMap.get(elementName);
-                    elementRepo.put(pageName + "." + elementName, locator);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error loading Web UI elements from {}: {}", elementsYamlPath, e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void loadElementRepo(String repoPath) {
-        Path path = Path.of(repoPath);
-        if(Files.isDirectory(path)){
-            //load all yaml files in the directory
-            elementRepo = new HashMap<>();
-            try{
-                Files.list(path).filter(p -> p.toString().endsWith(".yml") || p.toString().endsWith(".yaml")).forEach(p -> {
-                    loadElements(p.toString());
-                });
-            } catch (IOException e) {
-                logger.error("Error loading Web UI elements from directory {}: {}", repoPath, e.getMessage());
-                throw new RuntimeException(e);
-            }
-        } else {
-            loadElements(repoPath);
-        }
     }
 
     /**
@@ -126,9 +82,10 @@ public class PlaywrightAgent extends Agent implements WebBrowserAgent{
         page.press(selector, key);
     }
 
-    public void readText(String elementName) {
+    public String readText(String elementName) {
+        waitForSelector(elementName);
         String selector = getElementLocator(elementName);
-        String text = page.textContent(selector);
+        return page.textContent(selector);
     }
 
     public boolean isVisible(String elementName) {
@@ -145,9 +102,10 @@ public class PlaywrightAgent extends Agent implements WebBrowserAgent{
         page.waitForSelector(selector, new Page.WaitForSelectorOptions().setState(state));
     }
 
-    public void isOnPage(String pageName){
+    public boolean isOnPage(String pageName){
         String pageRootLocator = getElementLocator(pageName + ".root");
         page.waitForSelector(pageRootLocator, new Page.WaitForSelectorOptions().setState(WaitForSelectorState.VISIBLE));
+        return page.isVisible(pageRootLocator);
     }
 
     public byte[] captureScreenshot() {
