@@ -92,4 +92,10 @@ public class CommonBrowserStepDef {
         WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.isOnPage(pageName);
     }
+
+    @Then("{string} closes the browser")
+    public void closeBrowser(String agentName){
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
+        agent.stopBrowser();
+    }
 }

@@ -59,6 +59,9 @@ public class PlaywrightAgent extends Agent implements WebBrowserAgent{
     }
 
     public void navigateTo(String url) {
+        if(!browser.isConnected()){
+            startBrowser();
+        }
         page.navigate(url);
     }
 

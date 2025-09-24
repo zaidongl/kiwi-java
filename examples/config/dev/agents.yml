@@ -6,8 +6,15 @@
     baseUrl: http://localhost:8000 # Base URL for the API, default: http://localhost:8080
 
 - !io.kiwi.config.gui.PlaywrightAgentConfig
-    name: BrowserAgent
+    name: BrowserAgent_PW
     headless: false # Whether to run the browser in headless mode, default: true
     browserType: chromium # Type of browser to use (chromium, firefox, webkit), default: chromium
+    browserTimeout: 3000 # Timeout for browser operations in milliseconds, default: 30000
+    elementRepo: data/web-gui-repo/web-pages.yml # Path to the element repository file
+
+- !io.kiwi.config.gui.SeleniumAgentConfig
+    name: BrowserAgent
+    headless: false # Whether to run the browser in headless mode, default: true
+    webDriver: chrome # Type of browser to use (chrome, firefox, edge), default: chrome
     browserTimeout: 3000 # Timeout for browser operations in milliseconds, default: 30000
     elementRepo: data/web-gui-repo/web-pages.yml # Path to the element repository file

@@ -1,11 +1,9 @@
 package io.kiwi.examples.glue;
 
-import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import io.kiwi.agents.gui.WebBrowserAgent;
 import io.kiwi.context.ScenarioContext;
 import org.apache.logging.log4j.LogManager;

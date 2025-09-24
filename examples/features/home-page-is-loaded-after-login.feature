@@ -10,6 +10,7 @@ Feature: Home Page is loaded after login
         And "BrowserAgent" type ciphertext "5035466170666f71707543666377412f5844743372773d3d" into "Login-Page.password-textbox"
         Then "BrowserAgent" clicks on "Login-Page.signin-button"
         Then "BrowserAgent" sees "Username or password is invalid" on "Login-Page.alert-label"
+        Then "BrowserAgent" closes the browser
 
     Scenario: login with valid credentials
         When "BrowserAgent" opens page "http://localhost:3000"
@@ -18,3 +19,4 @@ Feature: Home Page is loaded after login
         And "BrowserAgent" type ciphertext "336676614c673549446c7665737775587a68565163773d3d" into "Login-Page.password-textbox"
         Then "BrowserAgent" clicks on "Login-Page.signin-button"
         Then "BrowserAgent" should be on page "Home-Page"
+        Then "BrowserAgent" closes the browser
