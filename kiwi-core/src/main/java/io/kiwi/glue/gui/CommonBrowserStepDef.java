@@ -44,25 +44,25 @@ public class CommonBrowserStepDef {
         }
     }
 
-    @Given("{string} open page {string}")
+    @Given("{string} opens page {string}")
     public void iOpenBrowserWithUrl(String agentName, String url) {
         WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.navigateTo(url);
     }
 
-
     @Then("{string} should see UI element {string}")
-    public void shouldSeeButton(String agentName, String elementName) {
+    public void shouldSeeButton(String agentName, String elementName) throws InterruptedException {
         WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.waitForSelector(elementName);
     }
 
-    @When("{string} click UI element {string}")
+    @When("{string} clicks on {string}")
     public void clickElement(String agentName, String elementName) {
         WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.click(elementName);
     }
 
+    @When("{string} type {string} into {string}")
     @When("{string} input {string} into UI element {string}")
     public void inputIntoElement(String agentName, String text, String elementName) {
         String processedText = scenarioContext.evaluateVariable(text);
@@ -71,6 +71,7 @@ public class CommonBrowserStepDef {
         agent.type(elementName, processedText);
     }
 
+    @When("{string} type ciphertext {string} into {string}")
     @When("{string} input ciphertext {string} into text box {string}")
     public void inputIntoPasswordTextbox(String agentName, String ciphertext, String elementName) throws Exception {
         //ciphertext could be passed from variable, need to evaluate first
@@ -90,5 +91,11 @@ public class CommonBrowserStepDef {
     public void shouldBeOnPage(String agentName, String pageName) {
         WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
         agent.isOnPage(pageName);
+    }
+
+    @Then("{string} closes the browser")
+    public void closeBrowser(String agentName){
+        WebBrowserAgent agent = (WebBrowserAgent) this.scenarioContext.getAgent(agentName);
+        agent.stopBrowser();
     }
 }
