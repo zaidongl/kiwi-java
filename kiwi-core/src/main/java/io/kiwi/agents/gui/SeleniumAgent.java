@@ -2,9 +2,7 @@ package io.kiwi.agents.gui;
 
 import io.kiwi.agents.common.Agent;
 import io.kiwi.config.gui.SeleniumAgentConfig;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -128,6 +126,7 @@ public class SeleniumAgent extends Agent implements WebBrowserAgent{
 
     @Override
     public byte[] captureScreenshot() {
-        return null; // To be implemented
+        TakesScreenshot screenshotTaker = (TakesScreenshot) this.driver;
+        return screenshotTaker.getScreenshotAs(OutputType.BYTES);
     }
 }
