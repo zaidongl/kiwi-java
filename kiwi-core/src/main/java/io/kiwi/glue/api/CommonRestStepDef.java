@@ -47,7 +47,6 @@ public class CommonRestStepDef {
         scenarioContext.setVariable(variableName, stepResult);
     }
 
-
     @And("I have payload {string} from json file {string}")
     public void iHavePayloadFromJsonFile(String payloadVar, String jsonFilePath) throws IOException {
         //read the json file and convert to string
@@ -74,8 +73,12 @@ public class CommonRestStepDef {
             params = (Map<String, String>) paramsStepResult.getData();
         }
 
-        StepResult payloadStepResult = scenarioContext.getVariable(payloadVar);
-        String payload = payloadStepResult.getData().toString();
+        String payload = null;
+        if(payloadVar != null && !payloadVar.isEmpty()){
+            StepResult payloadStepResult = scenarioContext.getVariable(payloadVar);
+            payload = payloadStepResult.getData().toString();
+        }
+
         StepResult stepResult = restAgent.sendRequest(method, url, headers, params, payload);
         scenarioContext.setLastStepResult(stepResult);
     }
