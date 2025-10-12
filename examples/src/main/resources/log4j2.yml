@@ -1,0 +1,135 @@
+# 8 levels，from lower to higher：ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF。
+# intLevel: 0,100,200,300,400,500,600,700
+# intLevel lower value means higher priority
+Configuration:
+  # log level of internal status logger
+  status: WARN
+  # interval of reconfiguration, in seconds
+  monitorInterval: 5
+
+  Properties: # define global properties
+    Property: # default configuration (for dev env)。higher environments to be configured in VM args as below：
+      #QA：-Dlog.level.console=warn -Dlog.level.xjj=trace
+      #Production：-Dlog.level.console=warn -Dlog.level.xjj=info
+      - name: log.level.console
+        value: info
+      - name: log.path
+        value: ./logs
+      - name: project.name
+        value: kiwi-example-test-suite
+      - name: log.pattern
+        value: "%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:-} [%15.15t] %-30.30C{1.} : %m%n"
+
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: ${log.pattern}
+
+    RollingFile:
+      - name: ROLLING_FILE
+        fileName: ${log.path}/daily/${project.name}.log
+        filePattern: "${log.path}/daily/$${date:yyyy-MM-dd}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${log.pattern}
+        Filters:
+          ThresholdFilter:   # log level filter
+            - level: error   # log level
+              onMatch: DENY  # deny this level and above
+              onMismatch: NEUTRAL  # let next filter decide
+            - level: info
+              onMatch: ACCEPT
+              onMismatch: DENY
+        Policies:
+          SizeBasedTriggeringPolicy: # log split rule
+            size: "10MB"
+          TimeBasedTriggeringPolicy:  # daily classification
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:     # maximum number of files
+          max: 20
+
+      - name: EXCEPTION_ROLLING_FILE
+        ignoreExceptions: false
+        fileName: ${log.path}/exception/${project.name}_exception.log
+        filePattern: "${log.path}/exception/$${date:yyyy-MM-dd}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+        ThresholdFilter:
+          level: error
+          #onMatch="ACCEPT"
+          #onMatch="DENY"
+          #onMismatch="ACCEPT"
+          #onMismatch="DENY"
+          onMatch: ACCEPT
+          onMismatch: DENY
+        PatternLayout:
+          pattern: ${log.pattern}
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: "10MB"
+          TimeBasedTriggeringPolicy:
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: 100
+
+      - name: WARN_ROLLING_FILE
+        ignoreExceptions: false
+        fileName: ${log.path}/warn/${project.name}_warn.log
+        filePattern: "${log.path}/warn/$${date:yyyy-MM-dd-dd}/${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+        ThresholdFilter:
+          level: warn
+          #onMatch="ACCEPT"
+          #onMatch="DENY"
+          #onMismatch="ACCEPT"
+          #onMismatch="DENY"
+          onMatch: ACCEPT
+          onMismatch: DENY
+        PatternLayout:
+          pattern: ${log.pattern}
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: "10MB"
+          TimeBasedTriggeringPolicy:
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: 20
+
+      - name: ROLLING_FILE_USER
+        fileName: ${log.path}/user/user-${project.name}.log
+        filePattern: "${log.path}/user/$${date:yyyy-MM-dd}/user-${project.name}-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: ${log.pattern}
+        Filters:
+          ThresholdFilter:
+            - level: error
+              onMatch: DENY
+              onMismatch: NEUTRAL
+              #onMismatch:NEUTRAL
+            - level: info
+              onMatch: ACCEPT
+              onMismatch: DENY
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: "10MB"
+          TimeBasedTriggeringPolicy:
+            modulate: true
+            interval: 1
+        DefaultRolloverStrategy:
+          max: 100
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: ROLLING_FILE
+#        - ref: EXCEPTION_ROLLING_FILE
+#        - ref: WARN_ROLLING_FILE
+    Logger:
+      - name: exception
+        level: debug
+        additivity: true
+        AppenderRef:
+          - ref: EXCEPTION_ROLLING_FILE
