@@ -14,9 +14,9 @@ Configuration:
       - name: log.level.console
         value: info
       - name: log.path
-        value: ./${project.name}_log
+        value: ./logs
       - name: project.name
-        value: daily
+        value: kiwi-example-test-suite
       - name: log.pattern
         value: "%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:-} [%15.15t] %-30.30C{1.} : %m%n"
 
