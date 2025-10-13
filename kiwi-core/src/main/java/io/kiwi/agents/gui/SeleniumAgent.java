@@ -4,8 +4,11 @@ import io.kiwi.agents.common.Agent;
 import io.kiwi.config.gui.SeleniumAgentConfig;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -33,13 +36,25 @@ public class SeleniumAgent extends Agent implements WebBrowserAgent{
     public void startBrowser(boolean headless) {
         switch(config.getWebDriver()){
             case "chrome":
-                this.driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+                if(headless){
+                    options.addArguments("--headless");
+                }
+                this.driver = new ChromeDriver(options);
                 break;
             case "firefox":
-                this.driver = new FirefoxDriver();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                if(headless){
+                    firefoxOptions.addArguments("--headless");
+                }
+                this.driver = new FirefoxDriver(firefoxOptions);
                 break;
             case "edge":
-                this.driver = new EdgeDriver();
+                EdgeOptions edgeOptions = new EdgeOptions();
+                if(headless){
+                    edgeOptions.addArguments("--headless");
+                }
+                this.driver = new EdgeDriver(edgeOptions);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported WebDriver: " + config.getWebDriver());
