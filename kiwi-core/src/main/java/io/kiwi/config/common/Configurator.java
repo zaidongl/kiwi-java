@@ -15,6 +15,7 @@ public class Configurator {
     public static final String PROPERTY_ROOT_CONFIG_FILE = "rootConfigFile";
     private static final String ROOT_CONFIG_FIELD_PROJECT_NAME = "test-project-name";
     private static final String ROOT_CONFIG_FIELD_ENVIRONMENT = "environment";
+    private static final String PROPERTY_ENVIRONMENT = "env";
 
     private static Configurator instance;
     private static final Logger logger = LogManager.getLogger(Configurator.class);
@@ -49,7 +50,8 @@ public class Configurator {
             }
             Map<String, Object> configMap = (Map<String, Object>) config;
             testProjectName = (String) configMap.get(ROOT_CONFIG_FIELD_PROJECT_NAME);
-            environment = (String) configMap.get(ROOT_CONFIG_FIELD_ENVIRONMENT);
+            //Get environment from system properties if it's passed from command line, read from config file by default
+            environment = System.getProperty(PROPERTY_ENVIRONMENT, (String) configMap.get(ROOT_CONFIG_FIELD_ENVIRONMENT));
             logger.info("Root configuration loaded successfully.");
         }catch(IOException e){
             logger.error("Error loading root configuration file: {}", e.getMessage());
