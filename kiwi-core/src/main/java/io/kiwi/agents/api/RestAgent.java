@@ -5,10 +5,13 @@ import static io.restassured.RestAssured.given;
 import io.kiwi.agents.common.Agent;
 import io.kiwi.config.api.RestAgentConfig;
 import io.kiwi.context.StepResult;
+import io.kiwi.security.auth.BasicAuth;
+import io.kiwi.security.auth.BearerToken;
 import io.restassured.config.*;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /*
@@ -25,8 +28,19 @@ public class RestAgent extends Agent {
     public StepResult sendRequest(String method, String url, Map<String, String> headers, Map<String, String> params, String body) {
         String fullUrl = agentConfig.getBaseUrl() + url;
         RequestSpecification request = given().config(RestAssuredConfig.config()
-            .httpClient(HttpClientConfig.httpClientConfig()
-                .setParam("http.connection.timeout", agentConfig.getConnectionTimeout())));
+                .httpClient(HttpClientConfig.httpClientConfig()
+                        .setParam("http.connection.timeout", agentConfig.getConnectionTimeout())));
+
+        if(agentConfig.getRequestAuth() != null){
+            if(agentConfig.getRequestAuth() instanceof BasicAuth auth){
+                request.auth().basic(auth.getUsername(), auth.getPassword());
+            }else if(agentConfig.getRequestAuth() instanceof BearerToken token){
+                if(headers == null){
+                    headers = new HashMap<>();
+                }
+                headers.put("Authorization", "Bearer " + token.getToken());
+            }
+        }
 
         if(headers != null && !headers.isEmpty()){
             request.headers(headers);
