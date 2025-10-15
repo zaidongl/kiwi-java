@@ -9,4 +9,4 @@ Feature: example API testing
         Then "RestAgent" send a "GET" request to endpoint "/greet" with "@header", "" and ""
         Then Get response as "@response"
         Then The "@response" status code should be 200
-        Then The "@response" body should contain "Hello from KiwiRunService!"
+        Then The "@response" body should contain "Hello Kiwi!"
