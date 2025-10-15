@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/greet",
+    "headers": {
+      "Content-Type": {
+        "equalTo": "application/json"
+      }
+    }
+  },
+
+  "response": {
+    "status": 200,
+    "body": "Hello Kiwi!",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  }
+}

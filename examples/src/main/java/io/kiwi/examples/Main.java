@@ -7,14 +7,13 @@ import io.kiwi.Runner;
 import java.io.IOException;
 import java.util.Map;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
         logger.info("Starting Regression Tests for sample app...");
         Map<String, String> parsedArgs = Runner.parseArgs(args);
+
         String[] cucumberOptions = new String[]{
                 "features",
                 "--glue", "io.kiwi.glue",
