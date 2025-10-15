@@ -4,6 +4,7 @@ Feature: example API testing
     I want to verify that the example API is working correctly
 
     Scenario: default greeting API - positive case
+        Given "RestMockAgent" is running
         And I have headers "@header" as below
             | Content-Type | application/json |
         Then "RestAgent" send a "GET" request to endpoint "/greet" with "@header", "" and ""

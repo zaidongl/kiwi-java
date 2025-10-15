@@ -1,14 +1,18 @@
 package io.kiwi.agents.mock;
 
-import com.github.tomakehurst.wiremock.direct.DirectCallHttpServerFactory;
+import io.kiwi.agents.common.Agent;
 import io.kiwi.config.mock.WireMockAgentConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
-public class WireMockAgent {
+public class WireMockAgent extends Agent {
+    private static final Logger logger = LogManager.getLogger(WireMockAgent.class);
     private final WireMockAgentConfig config;
-    private WireMockServer wireMockServer;
+    private final WireMockServer wireMockServer;
 
     public WireMockAgent(WireMockAgentConfig config) {
         this.config = config;
@@ -27,14 +31,18 @@ public class WireMockAgent {
     }
 
     public void start() {
+        logger.info("Starting WireMock server on port: {}", config.getPort());
         if (!wireMockServer.isRunning()) {
             wireMockServer.start();
+            logger.info("WireMock server started successfully.");
         }
     }
 
     public void stop() {
+        logger.info("Stopping WireMock server on port: {}", config.getPort());
         if (wireMockServer.isRunning()) {
             wireMockServer.stop();
+            logger.info("WireMock server stopped successfully.");
         }
     }
 }

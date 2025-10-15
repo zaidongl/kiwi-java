@@ -5,6 +5,11 @@
         token: your_token_here # Replace with your encrypted actual token
     baseUrl: http://localhost:8080 # Base URL for the API, default: http://localhost:8080
 
+- !io.kiwi.config.mock.WireMockAgentConfig
+    name: RestMockAgent
+    port: 9090
+    mappingsPath: data/wiremock
+
 - !io.kiwi.config.gui.PlaywrightAgentConfig
     name: BrowserAgent_PW
     headless: true # Whether to run the browser in headless mode, default: true
