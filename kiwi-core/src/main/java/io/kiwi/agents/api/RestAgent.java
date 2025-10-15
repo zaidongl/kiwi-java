@@ -35,9 +35,7 @@ public class RestAgent extends Agent {
             if(agentConfig.getRequestAuth() instanceof BasicAuth auth){
                 request.auth().basic(auth.getUsername(), auth.getPassword());
             }else if(agentConfig.getRequestAuth() instanceof BearerToken token){
-                if(headers == null){
-                    headers = new HashMap<>();
-                }
+                headers = new HashMap<>(headers != null ? headers : new HashMap<>());
                 headers.put("Authorization", "Bearer " + token.getToken());
             }
         }
