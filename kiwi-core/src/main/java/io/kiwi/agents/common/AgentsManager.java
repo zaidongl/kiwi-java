@@ -30,8 +30,8 @@ public class AgentsManager {
                 Agent agent = (Agent)Class.forName(agentConfig.getAgentClassName()).getConstructor(agentConfig.getClass()).newInstance(agentConfig);
                 agents.put(agentName, agent);
                 logger.info("Agent {} created successfully.", agentName);
-            } catch (Exception e) {
-                logger.error("Error creating agent {}: {}", agentName, e.getMessage());
+            } catch (Exception ex) {
+                logger.error("Error creating agent {}", agentName, ex);
                 return null;
             }
         }
